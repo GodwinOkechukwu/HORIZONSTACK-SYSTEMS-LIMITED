@@ -169,7 +169,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
               className="absolute top-0 left-0 w-full h-[3px] z-10"
               style={{
                 background:
-                  "linear-gradient(to right, #E8201A, #ff6b35, #E8201A)",
+                  "linear-gradient(to right, #525F55, #ff6b35, #525F55)",
               }}
               aria-hidden="true"
             />
@@ -184,7 +184,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
                 </span>
                 <span
                   className="text-xs font-semibold tracking-[0.2em] uppercase"
-                  style={{ color: "#E8201A" }}
+                  style={{ color: "#525F55" }}
                 >
                   Navigate
                 </span>
@@ -303,7 +303,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
                             <div className="flex items-center gap-3">
                               <span
                                 className="text-[10px] font-bold tabular-nums w-5 text-right shrink-0"
-                                style={{ color: "#E8201A" }}
+                                style={{ color: "#525F55" }}
                               >
                                 {String(index + 1).padStart(2, "0")}
                               </span>
@@ -383,7 +383,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
                                 className="w-1 h-5 rounded-full shrink-0 transition-colors duration-150"
                                 style={{
                                   background: isActive
-                                    ? "#E8201A"
+                                    ? "#525F55"
                                     : "rgba(255,255,255,0.1)",
                                 }}
                               />
