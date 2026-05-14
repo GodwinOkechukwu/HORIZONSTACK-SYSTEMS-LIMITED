@@ -1,11 +1,11 @@
 -- ============================================================
--- warespire E-Commerce PostgreSQL Schema
+-- horizonstack E-Commerce PostgreSQL Schema
 -- Replaces WooCommerce as the data source
--- All table names use the "warespire_" prefix (matches TABLE_PREFIX in .env)
+-- All table names use the "horizonstack_" prefix (matches TABLE_PREFIX in .env)
 -- ============================================================
 
 -- Users / Customers
-CREATE TABLE IF NOT EXISTS warespire_users (
+CREATE TABLE IF NOT EXISTS horizonstack_users (
   id               SERIAL PRIMARY KEY,
   first_name       VARCHAR(100) NOT NULL DEFAULT '',
   last_name        VARCHAR(100) NOT NULL DEFAULT '',
@@ -29,12 +29,12 @@ CREATE TABLE IF NOT EXISTS warespire_users (
 );
 
 -- Product Categories
-CREATE TABLE IF NOT EXISTS warespire_categories (
+CREATE TABLE IF NOT EXISTS horizonstack_categories (
   id          SERIAL PRIMARY KEY,
   name        VARCHAR(255) NOT NULL,
   slug        VARCHAR(255) UNIQUE NOT NULL,
   description TEXT,
-  parent_id   INTEGER REFERENCES warespire_categories(id) ON DELETE SET NULL,
+  parent_id   INTEGER REFERENCES horizonstack_categories(id) ON DELETE SET NULL,
   image_url   TEXT,
   count       INTEGER NOT NULL DEFAULT 0,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS warespire_categories (
 );
 
 -- Products
-CREATE TABLE IF NOT EXISTS warespire_products (
+CREATE TABLE IF NOT EXISTS horizonstack_products (
   id                SERIAL PRIMARY KEY,
   name              VARCHAR(500) NOT NULL,
   slug              VARCHAR(500) UNIQUE NOT NULL,
@@ -63,9 +63,9 @@ CREATE TABLE IF NOT EXISTS warespire_products (
 );
 
 -- Product Images
-CREATE TABLE IF NOT EXISTS warespire_product_images (
+CREATE TABLE IF NOT EXISTS horizonstack_product_images (
   id          SERIAL PRIMARY KEY,
-  product_id  INTEGER NOT NULL REFERENCES warespire_products(id) ON DELETE CASCADE,
+  product_id  INTEGER NOT NULL REFERENCES horizonstack_products(id) ON DELETE CASCADE,
   src         TEXT NOT NULL,
   name        VARCHAR(255),
   alt         TEXT,
@@ -74,25 +74,25 @@ CREATE TABLE IF NOT EXISTS warespire_product_images (
 );
 
 -- Product ↔ Category (many-to-many)
-CREATE TABLE IF NOT EXISTS warespire_product_categories (
-  product_id   INTEGER NOT NULL REFERENCES warespire_products(id) ON DELETE CASCADE,
-  category_id  INTEGER NOT NULL REFERENCES warespire_categories(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS horizonstack_product_categories (
+  product_id   INTEGER NOT NULL REFERENCES horizonstack_products(id) ON DELETE CASCADE,
+  category_id  INTEGER NOT NULL REFERENCES horizonstack_categories(id) ON DELETE CASCADE,
   PRIMARY KEY (product_id, category_id)
 );
 
 -- Product Attributes (e.g. Color, Size, Brand)
-CREATE TABLE IF NOT EXISTS warespire_product_attributes (
+CREATE TABLE IF NOT EXISTS horizonstack_product_attributes (
   id          SERIAL PRIMARY KEY,
-  product_id  INTEGER NOT NULL REFERENCES warespire_products(id) ON DELETE CASCADE,
+  product_id  INTEGER NOT NULL REFERENCES horizonstack_products(id) ON DELETE CASCADE,
   name        VARCHAR(255) NOT NULL,
   options     TEXT[] NOT NULL DEFAULT '{}',
   position    INTEGER NOT NULL DEFAULT 0
 );
 
 -- Orders
-CREATE TABLE IF NOT EXISTS warespire_orders (
+CREATE TABLE IF NOT EXISTS horizonstack_orders (
   id                    SERIAL PRIMARY KEY,
-  customer_id           INTEGER REFERENCES warespire_users(id) ON DELETE SET NULL,
+  customer_id           INTEGER REFERENCES horizonstack_users(id) ON DELETE SET NULL,
   status                VARCHAR(50) NOT NULL DEFAULT 'pending',
   currency              VARCHAR(10) NOT NULL DEFAULT 'NGN',
   total                 DECIMAL(14,2) NOT NULL DEFAULT 0,
@@ -112,10 +112,10 @@ CREATE TABLE IF NOT EXISTS warespire_orders (
 );
 
 -- Order Line Items
-CREATE TABLE IF NOT EXISTS warespire_order_items (
+CREATE TABLE IF NOT EXISTS horizonstack_order_items (
   id          SERIAL PRIMARY KEY,
-  order_id    INTEGER NOT NULL REFERENCES warespire_orders(id) ON DELETE CASCADE,
-  product_id  INTEGER REFERENCES warespire_products(id) ON DELETE SET NULL,
+  order_id    INTEGER NOT NULL REFERENCES horizonstack_orders(id) ON DELETE CASCADE,
+  product_id  INTEGER REFERENCES horizonstack_products(id) ON DELETE SET NULL,
   name        VARCHAR(500) NOT NULL,
   quantity    INTEGER NOT NULL DEFAULT 1,
   price       DECIMAL(14,2) NOT NULL,
@@ -125,10 +125,10 @@ CREATE TABLE IF NOT EXISTS warespire_order_items (
 );
 
 -- Paylater Requests
-CREATE TABLE IF NOT EXISTS warespire_paylater_requests (
+CREATE TABLE IF NOT EXISTS horizonstack_paylater_requests (
   id          SERIAL PRIMARY KEY,
-  customer_id INTEGER REFERENCES warespire_users(id) ON DELETE CASCADE,
-  product_id  INTEGER REFERENCES warespire_products(id) ON DELETE SET NULL,
+  customer_id INTEGER REFERENCES horizonstack_users(id) ON DELETE CASCADE,
+  product_id  INTEGER REFERENCES horizonstack_products(id) ON DELETE SET NULL,
   status      VARCHAR(50) NOT NULL DEFAULT 'pending',
   payment     JSONB NOT NULL DEFAULT '[]',
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS warespire_paylater_requests (
 );
 
 -- Hero / Promotional Banners
-CREATE TABLE IF NOT EXISTS warespire_banners (
+CREATE TABLE IF NOT EXISTS horizonstack_banners (
   id          SERIAL PRIMARY KEY,
   name        VARCHAR(255),
   image_url   TEXT NOT NULL,
@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS warespire_banners (
 );
 
 -- Global Store Settings (key-value)
-CREATE TABLE IF NOT EXISTS warespire_global_settings (
+CREATE TABLE IF NOT EXISTS horizonstack_global_settings (
   id          SERIAL PRIMARY KEY,
   key         VARCHAR(255) UNIQUE NOT NULL,
   value       TEXT,
@@ -156,9 +156,9 @@ CREATE TABLE IF NOT EXISTS warespire_global_settings (
 );
 
 -- Product Reviews
-CREATE TABLE IF NOT EXISTS warespire_reviews (
+CREATE TABLE IF NOT EXISTS horizonstack_reviews (
   id          SERIAL PRIMARY KEY,
-  product_id  INTEGER NOT NULL REFERENCES warespire_products(id) ON DELETE CASCADE,
+  product_id  INTEGER NOT NULL REFERENCES horizonstack_products(id) ON DELETE CASCADE,
   reviewer    VARCHAR(255) NOT NULL,
   email       VARCHAR(255),
   rating      INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
@@ -168,26 +168,26 @@ CREATE TABLE IF NOT EXISTS warespire_reviews (
 );
 
 -- ── Indexes ──────────────────────────────────────────────────
-CREATE INDEX IF NOT EXISTS idx_warespire_products_status        ON warespire_products(status);
-CREATE INDEX IF NOT EXISTS idx_warespire_products_stock_status  ON warespire_products(stock_status);
-CREATE INDEX IF NOT EXISTS idx_warespire_product_images_product ON warespire_product_images(product_id, position);
-CREATE INDEX IF NOT EXISTS idx_warespire_product_cat_product    ON warespire_product_categories(product_id);
-CREATE INDEX IF NOT EXISTS idx_warespire_product_cat_category   ON warespire_product_categories(category_id);
-CREATE INDEX IF NOT EXISTS idx_warespire_orders_customer        ON warespire_orders(customer_id);
-CREATE INDEX IF NOT EXISTS idx_warespire_orders_status          ON warespire_orders(status);
-CREATE INDEX IF NOT EXISTS idx_warespire_order_items_order      ON warespire_order_items(order_id);
-CREATE INDEX IF NOT EXISTS idx_warespire_categories_parent      ON warespire_categories(parent_id);
-CREATE INDEX IF NOT EXISTS idx_warespire_categories_slug        ON warespire_categories(slug);
-CREATE INDEX IF NOT EXISTS idx_warespire_reviews_product        ON warespire_reviews(product_id);
+CREATE INDEX IF NOT EXISTS idx_horizonstack_products_status        ON horizonstack_products(status);
+CREATE INDEX IF NOT EXISTS idx_horizonstack_products_stock_status  ON horizonstack_products(stock_status);
+CREATE INDEX IF NOT EXISTS idx_horizonstack_product_images_product ON horizonstack_product_images(product_id, position);
+CREATE INDEX IF NOT EXISTS idx_horizonstack_product_cat_product    ON horizonstack_product_categories(product_id);
+CREATE INDEX IF NOT EXISTS idx_horizonstack_product_cat_category   ON horizonstack_product_categories(category_id);
+CREATE INDEX IF NOT EXISTS idx_horizonstack_orders_customer        ON horizonstack_orders(customer_id);
+CREATE INDEX IF NOT EXISTS idx_horizonstack_orders_status          ON horizonstack_orders(status);
+CREATE INDEX IF NOT EXISTS idx_horizonstack_order_items_order      ON horizonstack_order_items(order_id);
+CREATE INDEX IF NOT EXISTS idx_horizonstack_categories_parent      ON horizonstack_categories(parent_id);
+CREATE INDEX IF NOT EXISTS idx_horizonstack_categories_slug        ON horizonstack_categories(slug);
+CREATE INDEX IF NOT EXISTS idx_horizonstack_reviews_product        ON horizonstack_reviews(product_id);
 
 -- ── Default Global Settings ───────────────────────────────────
-INSERT INTO warespire_global_settings (key, value) VALUES
-  ('shop_name',           'warespire'),
-  ('company_name',        'warespire Technologies Limited'),
+INSERT INTO horizonstack_global_settings (key, value) VALUES
+  ('shop_name',           'horizonstack'),
+  ('company_name',        'horizonstack Technologies Limited'),
   ('address',             'Nigeria'),
-  ('email',               'support@warespire.com'),
+  ('email',               'support@horizonstack.com'),
   ('contact',             ''),
-  ('website',             'https://warespire.com'),
+  ('website',             'https://horizonstack.com'),
   ('default_currency',    'NGN'),
   ('default_time_zone',   'Africa/Lagos'),
   ('default_date_format', 'DD-MM-YYYY'),

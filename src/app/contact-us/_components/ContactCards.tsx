@@ -35,7 +35,7 @@ const ContactCards = () => {
       title: "Email Us",
       type: "email",
       icon: <RxEnvelopeClosed />,
-      additionalText: "support@warespire.com",
+      additionalText: "support@horizonstack.com",
       // additionalText: GeneralSettings ? GeneralSettings[0]?.value : "N/A",
     },
     {
@@ -43,7 +43,7 @@ const ContactCards = () => {
       title: "Call Us",
       type: "tel",
       icon: <FiPhoneCall />,
-      additionalText: "08034802011",
+      additionalText: "0902 764 3882",
       // additionalText: GeneralSettings ? GeneralSettings[1]?.value : "N/A",
     },
     {
@@ -51,7 +51,7 @@ const ContactCards = () => {
       title: "Our Location",
       type: "text",
       icon: <IoLocationOutline />,
-      description: "28, Adekunle Fajuyi Way, Ikeja GRA, Lagos",
+      description: "28,BAMGBOSE ST AGA Ikorodu",
       // description: GeneralSettings ? GeneralSettings[2]?.value : "N/A",
     },
     {
@@ -150,7 +150,7 @@ const ContactCards = () => {
               Send a Message
             </p>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
-              Send an email to support@warespire.com. We'll get back to you
+              Send an email to support@horizonstack.com. We'll get back to you
               shortly
             </h2>
           </div>
